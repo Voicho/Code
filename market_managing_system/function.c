@@ -404,6 +404,7 @@ void DestroyGoods(GoodList **L)  //释放商品链表
 	do{
 		p_before = p_now;
 		p_now = p_now->next;
+		free(p_before->data);
 		free(p_before);
 		CurrentCnt--;
 	}while(p_now != NULL);
