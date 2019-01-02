@@ -175,6 +175,7 @@ void info_insert(GoodList **L)  //添加一条商品记录
 		if(strcmp(p_new->data->good_id,p_now->data->good_id) == 0)
 		{
 			printf("ID repeats\n");
+			break
 		}
 		p_before = p_now;
 		p_now = p_now->next;
