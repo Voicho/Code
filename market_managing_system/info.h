@@ -29,7 +29,11 @@ typedef struct node  //定义商品链表的结点
 }GoodList;
 
 bool check_nullfile(void);
+int assign_memory(GoodList **p);
 int read_word(char str[], int lenth);
 int fread_word(FILE *fp, char str[], int lenth);
+int read_data(FILE *fp, GoodList *p);
+int input_data(GoodList *p);
+int write_data(FILE *fp, GoodList *p);
 
 #endif

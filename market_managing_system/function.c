@@ -7,68 +7,31 @@
 
 void info_init(GoodList **L)  //¶ÁÈ¡ÉÌÆ·ÎÄ¼şgoodinfo.txtµÄÄÚÈİ,²¢½¨Á¢Á´±íL
 {
-	bool is_first = true;
 	bool res = check_nullfile();  //1.ÅĞ¶Ïgoodinfo.txtÊÇ·ñ´æÔÚ£¬²»´æÔÚÔòĞÂ½¨Ò»¸ögoodinfo.txt
-
-	*L = NULL;
 	FILE *fp = fopen("goodinfo.txt","r");
 	GoodList *p_now = NULL;
 	GoodList *p_before = NULL;
+	*L = NULL;
 
 	while( res && !feof(fp) )  //3.È»ºóĞÂ½¨Á´±í
 	{
-		if(is_first)  //½«*LÖ¸ÏòµÚÒ»¸ö½Úµã
+		assign_memory(&p_now);
+		if(*L == NULL)  //½«*LÖ¸ÏòµÚÒ»¸ö½Úµã
 		{
-			p_now = (GoodList *)malloc(sizeof(GoodList));
-			if(p_now == NULL)  //Ã»ÄÚ´æ¾ÍÖ±½ÓÍËÁË
-			{
-				printf("Insufficient memory\n");
-				return;
-			}
-			p_now->data = (GoodInfo *)malloc(sizeof(GoodInfo));
-			if(p_now->data == NULL)  //Ã»ÄÚ´æ¾ÍÖ±½ÓÍËÁË
-			{
-				printf("Insufficient memory\n");
-				return;
-			}
-			is_first = false;
 			*L = p_now;
 			p_before = p_now;
-			CurrentCnt++;
 		}
 		else  //ÖÆ×÷Á´±í
 		{
-			p_now = (GoodList *)malloc(sizeof(GoodList));
-			if(p_now == NULL)  //Ã»ÄÚ´æ¾ÍÖ±½ÓÍËÁË
-			{
-				printf("Insufficient memory\n");
-				return;
-			}
-			p_now->data = (GoodInfo *)malloc(sizeof(GoodInfo));
-			if(p_now->data == NULL)  //Ã»ÄÚ´æ¾ÍÖ±½ÓÍËÁË
-			{
-				printf("Insufficient memory\n");
-				return;
-			}
 			p_before->next = p_now;  //ÉÏÒ»¸ö½Úµãp->next = ĞÂ½Úµãp
 			p_before = p_now;
-			CurrentCnt++;
 		}
-		//2.ÔÚÎ´´ïµ½ÎÄ¼şÎ²µÄÇé¿öÏÂ£¬´ÓÎÄ¼şÖĞ¶ÁÈ¡ÉÌÆ·ĞÅÏ¢
-		fread_word(fp,p_now->data->good_id,MAX_ID_LEN);
-		fread_word(fp,p_now->data->good_name,MAX_NAME_LEN);
-		fscanf(fp,"%d",&p_now->data->good_price);
-		fread_word(fp,p_now->data->good_discount,MAX_DISCOUNT_LEN);
-		fscanf(fp,"%d",&p_now->data->good_amount);
-		fscanf(fp,"%d",&p_now->data->good_remain);
-		fscanf(fp,"\n");
+		CurrentCnt++;
+		read_data(fp,p_now);  //2.ÔÚÎ´´ïµ½ÎÄ¼şÎ²µÄÇé¿öÏÂ£¬´ÓÎÄ¼şÖĞ¶ÁÈ¡ÉÌÆ·ĞÅÏ¢
 	}
 	if(res)  //Èç¹ûÎÄ¼ş´æÔÚ£¬ÇÒ²»Îª¿Õ£¬¾Í½«×îºóÒ»½ÚµãµÄnextÖ¸ÏòNULL
-	{
 		p_now->next = NULL;
-	}
 	fclose(fp);
-
 	printf("ÉÌÆ·µÄÁ´±íÎÄ¼şÒÑ½¨Á¢£¬ÓĞ%d¸öÉÌÆ·¼ÇÂ¼\n", CurrentCnt);
 }
 
@@ -111,22 +74,10 @@ void info_change(GoodList **L)  //ĞŞ¸ÄÒ»ÌõÉÌÆ·¼ÇÂ¼
 		}
 		p_now = p_now->next;
 	}
-
 	if(repeat)  //2.È»ºóÓÃ»§ÊäÈëĞÂµÄÉÌÆ·ĞÅÏ¢
 	{
 		Goodprint(p_now);
-		printf("Input product id: ");
-		read_word(p_now->data->good_id,MAX_ID_LEN);
-		printf("Input product name: ");
-		read_word(p_now->data->good_name,MAX_NAME_LEN);
-		printf("Input product price: ");
-		scanf("%d",&p_now->data->good_price);
-		printf("Input product discount: ");
-		read_word(p_now->data->good_discount,MAX_DISCOUNT_LEN);
-		printf("Input product amount: ");
-		scanf("%d",&p_now->data->good_amount);
-		printf("Input product remain: ");
-		scanf("%d",&p_now->data->good_remain);
+		input_data(p_now);
 		printf("Change successfully");  //3.Èç¹ûÒªĞŞ¸ÄµÄÉÌÆ·´æÔÚ²¢ÇÒĞÅÏ¢ÊäÈë½áÊøºóÔò³öÏÖĞŞ¸Ä³É¹¦²¢ÇÒÖØĞÂ´òÓ¡³öÈí¼şÑ¡Ôñ½çÃæ
 	}
 	else
@@ -141,35 +92,10 @@ void info_insert(GoodList **L)  //Ìí¼ÓÒ»ÌõÉÌÆ·¼ÇÂ¼
 	GoodList *p_now = *L;
 	GoodList *p_before = NULL;
 	GoodList *p_new = NULL;  //ĞÂ½¨½Úµã´æÊı¾İ
+
 	printf("info_insert\n");
-
-	p_new = (GoodList *)malloc(sizeof(GoodList));
-	if(p_new == NULL)  //Ã»ÄÚ´æ¾ÍÖ±½ÓÍËÁË
-	{
-		printf("Insufficient memory\n");
-		return;
-	}
-	p_new->data = (GoodInfo *)malloc(sizeof(GoodInfo));
-	if(p_new->data == NULL)  //Ã»ÄÚ´æ¾ÍÖ±½ÓÍËÁË
-	{
-		printf("Insufficient memory\n");
-		return;
-	}
-	p_new->next = NULL;
-	//1.½ÓÊÕÊäÈëµÄÄ³Ò»ÌõÉÌÆ·µÄĞÅÏ¢£¬°üÀ¨ID¡¢Ãû³Æ¡¢¼Û¸ñ¡¢ÕÛ¿Û¡¢ÊıÁ¿¡¢Ê£Óà
-	printf("Input product id: ");
-	read_word(p_new->data->good_id,MAX_ID_LEN);
-	printf("Input product name: ");
-	read_word(p_new->data->good_name,MAX_NAME_LEN);
-	printf("Input product price: ");
-	scanf("%d",&p_new->data->good_price);
-	printf("Input product discount: ");
-	read_word(p_new->data->good_discount,MAX_DISCOUNT_LEN);
-	printf("Input product amount: ");
-	scanf("%d",&p_new->data->good_amount);
-	printf("Input product remain: ");
-	scanf("%d",&p_new->data->good_remain);
-
+	assign_memory(&p_new);
+	input_data(p_new);  //1.½ÓÊÕÊäÈëµÄÄ³Ò»ÌõÉÌÆ·µÄĞÅÏ¢£¬°üÀ¨ID¡¢Ãû³Æ¡¢¼Û¸ñ¡¢ÕÛ¿Û¡¢ÊıÁ¿¡¢Ê£Óà
 	while(p_now != NULL)  //4.IDºÅÔÚ²åÈëµÄÊ±ºòĞèÒª½øĞĞ²éÖØ£¬Èç¹ûÒÑ¾­ÓĞ¸ÃIDºÅÁË£¬ÌáÊ¾ÖØ¸´
 	{
 		if(strcmp(p_new->data->good_id,p_now->data->good_id) == 0)
@@ -216,7 +142,6 @@ void info_insert(GoodList **L)  //Ìí¼ÓÒ»ÌõÉÌÆ·¼ÇÂ¼
 	}
 	CurrentCnt++;
 	printf("Insert successfully\n");
-
 }
 
 void info_delete(GoodList **L)  //É¾³ıÒ»ÌõÉÌÆ·¼ÇÂ¼
@@ -225,8 +150,8 @@ void info_delete(GoodList **L)  //É¾³ıÒ»ÌõÉÌÆ·¼ÇÂ¼
 	GoodList *p_now = *L;
 	GoodList *p_before = NULL;
 	char good_name[MAX_NAME_LEN];
-	printf("info_delete\n");
 
+	printf("info_delete\n");
 	if(*L == NULL)  //Èç¹ûÊÇ¸ö¿ÕÁ´±í£¬Ö±½Óµ¯»ØÈ¥£¬ÃâµÃ±Àµô
 	{
 		printf("NO DATA\n");
@@ -244,7 +169,6 @@ void info_delete(GoodList **L)  //É¾³ıÒ»ÌõÉÌÆ·¼ÇÂ¼
 		p_before = p_now;
 		p_now = p_now->next;
 	}
-
 	if(repeat)  //Èç¹ûÃû³Æ´æÔÚÔòÉ¾³ıÉÌÆ·ĞÅÏ¢£¬¼´ÊÍ·Å¶ÔÓ¦Ö¸ÕëËùÖ¸ÏòµÄÄÚ´æ£¬²¢ÇÒ½«¸ÃÖ¸Õë¸³ÖµÎª¿Õ£¬È»ºó´òÓ¡³öÉ¾³ı³É¹¦µÄÌáÊ¾
 	{
 		if(p_now == *L)
@@ -255,7 +179,7 @@ void info_delete(GoodList **L)  //É¾³ıÒ»ÌõÉÌÆ·¼ÇÂ¼
 		}
 		else
 		{
-			p_before->next = p_now->next; 
+			p_before->next = p_now->next;
 			free(p_now);
 			p_now = NULL;
 		}
@@ -292,7 +216,6 @@ void info_search(GoodList **L)  //²éÕÒÒ»ÌõÉÌÆ·¼ÇÂ¼
 		}
 		p_now = p_now->next;
 	}
-
 	if(repeat)  //Èç¹ûÃû³Æ´æÔÚÔò´òÓ¡ÉÌÆ·ĞÅÏ¢
 		Goodprint(p_now);
 	else  //2.Èç¹ûÉÌÆ·²»´æÔÚÔòÌáÊ¾ÉÌÆ·²»´æÔÚ
@@ -304,22 +227,15 @@ void info_flush(GoodList **L)  //½«µ±Ç°ÉÌÆ·Á´±íÖĞµÄÄÚÈİ´æÈëÉÌÆ·ÎÄ¼şgoodinfo.txt£
 	int savecount = CurrentCnt;
 	GoodList *p_now = *L;
 	FILE *fp = fopen("goodinfo.txt","w");
-	printf("info_flush\n");
 
+	printf("info_flush\n");
 	while(p_now != NULL)  //1.½«Á´±íÄÚÈİĞ´Èëµ½goodinfo.txt
 	{
-		fprintf(fp,"%s\t",p_now->data->good_id);
-		fprintf(fp,"%s\t",p_now->data->good_name);
-		fprintf(fp,"%d\t",p_now->data->good_price);
-		fprintf(fp,"%s\t",p_now->data->good_discount);
-		fprintf(fp,"%d\t",p_now->data->good_amount);
-		fprintf(fp,"%d\n",p_now->data->good_remain);
+		write_data(fp,p_now);
 		p_now = p_now->next;
 	}
 	fclose(fp);
-	DelAll(L);  //2.Ïú»ÙÁ´±í
-	CurrentCnt = 0;  //3.ÉÌÆ·ÊıÁ¿ÖÃ0
-
+	DelAll(L);  //2.Ïú»ÙÁ´±í3.ÉÌÆ·ÊıÁ¿ÖÃ0
 	if(savecount != 0)
 		printf("ÌáÊ¾£º%d¸öÉÌÆ·ĞÅÏ¢´æÈëGoodinfo.txtÎÄ¼ş\n", savecount);
 	else
@@ -328,7 +244,6 @@ void info_flush(GoodList **L)  //½«µ±Ç°ÉÌÆ·Á´±íÖĞµÄÄÚÈİ´æÈëÉÌÆ·ÎÄ¼şgoodinfo.txt£
 
 void bubble_sort(GoodList **L)  //Ã°ÅİÅÅĞòÊµÏÖ¶ÔÁ´±í½ÚµãµÄÅÅĞò
 {
-	bool is_first = true;  //×ÖÃæÒâË¼£¬ÅĞ¶ÏÊÇ·ñÊÇµÚÒ»´ÎÔËĞĞ£¬ÓÃÓÚ¸Ä *L
 	GoodList *p_now = *L;  //p_before  p_nowÊÇÔËĞĞÖĞÏàÁÚµÄ2½á¹¹µÄÖ¸Õë
 	GoodList *p_before = NULL;
 	GoodList *p_end = NULL;  //±ê¼Ç½áÎ²£¬Ã¿´ÎÌáÇ°Ò»¸ö£¬bubble_sortÌØÉ«
@@ -347,7 +262,7 @@ void bubble_sort(GoodList **L)  //Ã°ÅİÅÅĞòÊµÏÖ¶ÔÁ´±í½ÚµãµÄÅÅĞò
 		{
 			if(p_now->data->good_price  >  p_now->next->data->good_price)  //¹óµÄ¶«Î÷¶ªµ½Á´±íÎ²
 			{
-				if(is_first)  //µÚÒ»´ÎÌØÊâÇé¿ö£¬Òª¸Ä±íÍ·
+				if(*L == p_now)  //µÚÒ»´ÎÌØÊâÇé¿ö£¬Òª¸Ä±íÍ·
 				{
 					*L = p_now->next;
 					p_before = p_now->next;
@@ -367,11 +282,9 @@ void bubble_sort(GoodList **L)  //Ã°ÅİÅÅĞòÊµÏÖ¶ÔÁ´±í½ÚµãµÄÅÅĞò
 				p_now = p_now->next;
 				p_before = p_now;
 			}
-			is_first = false;  //while×ß¹ıÒ»´Î¾Í²»ÊÇÁ´±íÍ·ÁË
 		}
 		p_end = p_now;  //ÏÂÒ»´ÎÑ­»·Ç°³õÊ¼»¯
 		p_now = *L;
-		is_first = true;
 	}
 	printf("sort succeed\n");
 }
