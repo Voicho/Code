@@ -29,8 +29,6 @@ void info_init(GoodList **L)  //读取商品文件goodinfo.txt的内容,并建立链表L
 		CurrentCnt++;
 		read_data(fp,p_now);  //2.在未达到文件尾的情况下，从文件中读取商品信息
 	}
-	if(res)  //如果文件存在，且不为空，就将最后一节点的next指向NULL
-		p_now->next = NULL;
 	fclose(fp);
 	printf("商品的链表文件已建立，有%d个商品记录\n", CurrentCnt);
 }
