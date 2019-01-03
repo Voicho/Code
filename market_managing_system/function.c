@@ -233,11 +233,8 @@ void info_flush(GoodList **L)  //╫╚╣╠г╟илф╥а╢╠Мжп╣ддзхщ╢ФхКилф╥нд╪Чgoodinfo.txtё
 		p_now = p_now->next;
 	}
 	fclose(fp);
-	DelAll(L);  //2.оЗ╩ыа╢╠М3.илф╥йЩа©жц0
-	if(savecount != 0)
-		printf("лАй╬ё╨%d╦Жилф╥пео╒╢ФхКGoodinfo.txtнд╪Ч\n", savecount);
-	else
-		printf("лАй╬ё╨н╢п╢хКхн╨нилф╥пео╒╣╫Goodinfo.txtнд╪Ч\n");
+	DestroyGoods(L);  //2.оЗ╩ыа╢╠М3.илф╥йЩа©жц0
+	printf("лАй╬ё╨%d╦Жилф╥пео╒╢ФхКGoodinfo.txtнд╪Ч\n", savecount);
 }
 
 void bubble_sort(GoodList **L)  //ц╟ещеепРй╣ож╤та╢╠М╫з╣Ц╣деепР
@@ -293,6 +290,7 @@ void DelAll(GoodList **L)  //и╬ЁЩилф╥нд╪Чрт╪╟илф╥а╢╠Мжп╣дкЫсппео╒
 	DestroyGoods(L);  //1.гЕ©у╢Ф╢╒илф╥дзхщ╣днд╪Ч
 	*L = NULL;  //2.гЕ©уилф╥а╢╠Мё╛оЗ╩ырясп╣д╫з╣Цё╛╡╒пб╫╗р╩╦Ж©уа╢╠Мм╥
 	CurrentCnt = 0;
+	printf("Delete succeed");
 }
 
 void Goodprint(GoodList *p)  //╢Рс║╣╔╦Жилф╥а╢╠М╫з╣Ц╣дпео╒
