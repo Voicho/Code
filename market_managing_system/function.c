@@ -274,8 +274,8 @@ void bubble_sort(GoodList **L)  //冒泡排序实现对链表节点的排序
 			}
 			else  //便宜就继续走，遍历链表
 			{
-				p_now = p_now->next;
 				p_before = p_now;
+				p_now = p_now->next;
 			}
 		}
 		p_end = p_now;  //下一次循环前初始化
