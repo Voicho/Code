@@ -169,6 +169,15 @@ void info_delete(GoodList **L)  //删除一条商品记录
 	}
 	if(repeat)  //如果名称存在则删除商品信息，即释放对应指针所指向的内存，并且将该指针赋值为空，然后打印出删除成功的提示
 	{
+		Goodprint(p_now);
+		int ch = 0;
+		while(ch != 'N' && ch != 'n' && ch != 'Y' && ch != 'y')
+		{
+			printf("confirm?(y/n)\n");
+			ch = getchar();
+			if(ch == 'N' || ch == 'n')
+				return ;
+		}
 		if(p_now == *L)
 		{
 			*L = p_now->next;
