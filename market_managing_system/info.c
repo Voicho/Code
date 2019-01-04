@@ -8,7 +8,7 @@ int CurrentCnt = 0;  //全局变量定义，存储当前商品的数量
 
 bool check_nullfile(void)  //检查商品文件是否存在或者是否为空
 {
-	FILE *fp = fopen("goodinfo.txt", "r");\
+	FILE *fp = fopen("goodinfo.txt", "r");
 	if(!fp)  //file not exist
 	{
 		printf("商品信息初始化文件不存在！程序将为您新建一个.\n");
